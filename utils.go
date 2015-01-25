@@ -6,7 +6,7 @@ import (
 )
 
 // Function to write JSON to an HTTP response
-func ToJSON(w http.ResponseWriter, val interface{}) {
+func ToJSON(w http.ResponseWriter, val interface{}) error {
     w.Header().Set("Content-Type", "application/json")
     b, _ := json.Marshal(val)
     w.Write(b)
