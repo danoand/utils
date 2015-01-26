@@ -7,7 +7,8 @@ import (
 	"net/http/httputil"
 )
 
-// DumpRequest - Function that dumps a passed HTTP Request object and returns it as a byte slice and string
+// DumpRequest - Function that dumps a passed HTTP Request object 
+// The function will return a byte slice and string
 func DumpRequest(inRequest *http.Request) (returnString string, returnBytes []byte, returnError error) {
 	log.Println("Dumping out the inbound request")
 
