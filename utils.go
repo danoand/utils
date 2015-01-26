@@ -18,7 +18,7 @@ func ToJSONResponse(w http.ResponseWriter, val interface{}) error {
 // The function will return JSON (string), JSON (byte slice) and an error value
 func ToJSONResponse(val interface{}) (returnString string, returnBytes []byte, returnError error) {
     // Encode the value to JSON
-    returnBytes, returnError := json.Marshal(val)
+    returnBytes, returnError = json.Marshal(val)
     if returnError == nil {
         // If there's no error then create a JSON string
         returnString = string(returnBytes)
