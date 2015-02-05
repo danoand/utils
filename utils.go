@@ -7,7 +7,7 @@ import (
 	"net/http/httputil"
 )
 
-// DumpRequest - Function that dumps a passed HTTP Request object 
+// DumpRequest - Function that dumps a passed HTTP Request object
 // The function will return a byte slice and string
 func DumpRequest(inRequest *http.Request) (returnString string, returnBytes []byte, returnError error) {
 	log.Println("Dumping out the inbound request")
@@ -45,6 +45,30 @@ func ToJSON(val interface{}) (returnString string, returnBytes []byte, returnErr
 	if returnError == nil {
 		// If there's no error then create a JSON string
 		returnString = string(returnBytes)
+	}
+
+	return
+}
+
+// CheckErr - check for an error and print to the log if the passed error is not nil
+func CheckErr(inError error, inString string) {
+	// Check the passed error for nil
+	if inError != nil {
+		log.Println("An error occurred:", inError, inString)
+	}
+
+	return
+}
+
+// CheckErrBool - check for an error; print any non nil error to the log; and return a boolean
+func CheckErrBool(inError error, inString string) (retBool bool) {
+	// Initialize a return boolean value
+	retBool = true
+
+	// Check the passed error for nil
+	if inError != nil {
+		log.Println("An error occurred:", inError, inString)
+		retBool = false
 	}
 
 	return
