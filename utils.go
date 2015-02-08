@@ -63,12 +63,12 @@ func CheckErr(inError error, inString string) {
 // CheckErrBool - check for an error; print any non nil error to the log; and return a boolean
 func CheckErrBool(inError error, inString string) (retBool bool) {
 	// Initialize a return boolean value
-	retBool = true
+	retBool = false
 
 	// Check the passed error for nil
 	if inError != nil {
 		log.Println("An error occurred:", inError, inString)
-		retBool = false
+		retBool = true
 	}
 
 	return
