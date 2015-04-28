@@ -37,7 +37,7 @@ func ToJSONResponse(w http.ResponseWriter, val interface{}) error {
 	return berr
 }
 
-// ToJSON - Function return a JSON string.
+// ToJSON - Function returns a JSON string.
 // The function will return JSON (string), JSON (byte slice) and an error value
 func ToJSON(val interface{}) (returnString string, returnBytes []byte, returnError error) {
 	// Encode the value to JSON
@@ -46,6 +46,20 @@ func ToJSON(val interface{}) (returnString string, returnBytes []byte, returnErr
 		// If there's no error then create a JSON string
 		returnString = string(returnBytes)
 	}
+
+	return
+}
+
+// FromJSON - Function converts JSON (a string) to a referenced (pointer to a) data structure
+func FromJSON(inVal string, outPtr interface{}) (retErr error) {
+  // Convert the string to a byte slice
+  tmpVal := []byte(inVal)
+  
+	// UnMarshall the byte array to a data structure pointed to by outPtr
+	retErr = json.Unmarshal(tmpVal, outPtr)
+  if retErr != nil {
+    log.Println("Error converting json string to a data structure:", retErr)
+  }
 
 	return
 }
