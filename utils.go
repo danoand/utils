@@ -90,8 +90,8 @@ func CheckErrBool(inError error, inString string) (retBool bool) {
 	return
 }
 
-// getport fetches the port number from an environment variable so we can run on Heroku
-func getport() string {
+// Getport fetches the port number from an environment variable so we can run on Heroku
+func Getport() string {
 	var port = os.Getenv("PORT")
 	// Set a default port if there is nothing in the environment
 	if port == "" {
