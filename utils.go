@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/http/httputil"
+	"os"
 )
 
 // DumpRequest - Function that dumps a passed HTTP Request object
@@ -86,4 +87,15 @@ func CheckErrBool(inError error, inString string) (retBool bool) {
 	}
 
 	return
+}
+
+// getport fetches the port number from an environment variable so we can run on Heroku
+func getport() string {
+	var port = os.Getenv("PORT")
+	// Set a default port if there is nothing in the environment
+	if port == "" {
+		port = "4567"
+		log.Printf("INFO: No PORT environment variable detected, defaulting to: %\n", port)
+	}
+	return fmt.Sprint(":", port)
 }
