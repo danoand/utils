@@ -95,7 +95,7 @@ func getport() string {
 	// Set a default port if there is nothing in the environment
 	if port == "" {
 		port = "4567"
-		log.Printf("INFO: No PORT environment variable detected, defaulting to: %\n", port)
+		log.Printf("INFO: No PORT environment variable detected, defaulting to: %v\n", port)
 	}
 	return fmt.Sprint(":", port)
 }
