@@ -57,13 +57,24 @@ func FromJSON(inVal string, outPtr interface{}) (retErr error) {
   // Convert the string to a byte slice
   tmpVal := []byte(inVal)
   
-	// UnMarshall the byte array to a data structure pointed to by outPtr
-	retErr = json.Unmarshal(tmpVal, outPtr)
+  // UnMarshall the byte array to a data structure pointed to by outPtr
+  retErr = json.Unmarshal(tmpVal, outPtr)
   if retErr != nil {
     log.Println("Error converting json string to a data structure:", retErr)
   }
 
-	return
+  return
+}
+
+// FromJSONBytes - Function converts JSON (a byte array) to a referenced (pointer to a) data structure
+func FromJSONBytes(inVal []byte, outPtr interface{}) (retErr error) {
+  // UnMarshall the byte array to a data structure pointed to by outPtr
+  retErr = json.Unmarshal(inVal, outPtr)
+  if retErr != nil {
+    log.Println("Error converting json string to a data structure:", retErr)
+  }
+
+  return
 }
 
 // CheckErr - check for an error and print to the log if the passed error is not nil
