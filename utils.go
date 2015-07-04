@@ -12,8 +12,6 @@ import (
 // DumpRequest - Function that dumps a passed HTTP Request object
 // The function will return a byte slice and string
 func DumpRequest(inRequest *http.Request) (returnString string, returnBytes []byte, returnError error) {
-	log.Println("Dumping out the inbound request")
-
 	// Fetch the request
 	returnBytes, returnError = httputil.DumpRequest(inRequest, true)
 	if returnError != nil {
@@ -33,8 +31,6 @@ func DumpRequest(inRequest *http.Request) (returnString string, returnBytes []by
 // DumpResponse - Function that dumps a passed HTTP Response object
 // The function will return a byte slice and string
 func DumpResponse(inResponse *http.Response) (returnString string, returnBytes []byte, returnError error) {
-	log.Println("Dumping out the inbound response")
-
 	// Fetch the response
 	returnBytes, returnError = httputil.DumpResponse(inResponse, true)
 	if returnError != nil {
