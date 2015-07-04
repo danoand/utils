@@ -30,6 +30,27 @@ func DumpRequest(inRequest *http.Request) (returnString string, returnBytes []by
 	return
 }
 
+// DumpResponse - Function that dumps a passed HTTP Response object
+// The function will return a byte slice and string
+func DumpResponse(inResponse *http.Response) (returnString string, returnBytes []byte, returnError error) {
+	log.Println("Dumping out the inbound response")
+
+	// Fetch the response
+	returnBytes, returnError = httputil.DumpResponse(inResponse, true)
+	if returnError != nil {
+		// Error occurred when dumping the request
+		log.Println("Got an error attempting to dump the request", returnError)
+	} else {
+		// Save the dumped request as a string
+		returnString = string(returnBytes)
+
+		// Print the request to the log
+		log.Println(returnString)
+	}
+
+	return
+}
+
 // ToJSONResponse - Function to write JSON to an HTTP response
 func ToJSONResponse(w http.ResponseWriter, val interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
