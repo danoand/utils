@@ -20,9 +20,6 @@ func DumpRequest(inRequest *http.Request) (returnString string, returnBytes []by
 	} else {
 		// Save the dumped request as a string
 		returnString = string(returnBytes)
-
-		// Print the request to the log
-		log.Println(returnString)
 	}
 
 	return
@@ -39,9 +36,6 @@ func DumpResponse(inResponse *http.Response) (returnString string, returnBytes [
 	} else {
 		// Save the dumped request as a string
 		returnString = string(returnBytes)
-
-		// Print the request to the log
-		log.Println(returnString)
 	}
 
 	return
