@@ -127,10 +127,11 @@ func Getport() string {
 func GetEnvVar(inVar string) string {
 	// Validate that an argument has been passed to the function
 	if len(inVar) == 0 {
-		log.Printf("WARN: ")
+		log.Printf("WARN: Missing environment variable name.  No value to be found.\n")
 		return ""
 	}
 
 	// Return the value of the environment variable
 	return os.Getenv(inVar)
 }
+
