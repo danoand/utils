@@ -122,3 +122,15 @@ func Getport() string {
 	}
 	return fmt.Sprint(":", port)
 }
+
+// GetEnvVar fetches the value of a local environment variable or returns an empty string if it does not exist
+func GetEnvVar(inVar string) string {
+	// Validate that an argument has been passed to the function
+	if len(inVar) == 0 {
+		log.Printf("WARN: ")
+		return ""
+	}
+
+	// Return the value of the environment variable
+	return os.Getenv(inVar)
+}
