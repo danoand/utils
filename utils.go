@@ -63,6 +63,21 @@ func ToJSON(val interface{}) (returnString string, returnBytes []byte, returnErr
 	return
 }
 
+// ToJSONnStatusResponse - Function to write JSON and a status code to an HTTP response
+func ToJSONnStatusResponse(w http.ResponseWriter, cde int, val interface{}) error {
+    // Set a header indicating a json formatted response body
+    w.Header().Set("Content-Type", "application/json")
+    
+    // Set the status code to be consumed by the client
+    w.WriteHeader(cde)
+    
+    // Marshal the body into json and write to the response
+    b, berr := json.Marshal(val)
+    w.Write(b)
+
+    return berr
+}
+
 // FromJSON - Function converts JSON (a string) to a referenced (pointer to a) data structure
 func FromJSON(inVal string, outPtr interface{}) (retErr error) {
   // Convert the string to a byte slice
