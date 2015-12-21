@@ -7,7 +7,17 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
+	"regexp"
+	"strings"
 )
+
+var rgxNumDigit *regexp.Regexp
+
+// init executes code at initialization time to ensure proper execution of the utils functions
+func init() {
+	// rgxNumDigit is a regular expression representing a numeric digit
+	rgxNumDigit = regexp.MustCompile("\\D")
+}
 
 // DumpRequest - Function that dumps a passed HTTP Request object
 // The function will return a byte slice and string
@@ -65,42 +75,42 @@ func ToJSON(val interface{}) (returnString string, returnBytes []byte, returnErr
 
 // ToJSONnStatusResponse - Function to write JSON and a status code to an HTTP response
 func ToJSONnStatusResponse(w http.ResponseWriter, cde int, val interface{}) error {
-    // Set a header indicating a json formatted response body
-    w.Header().Set("Content-Type", "application/json")
-    
-    // Set the status code to be consumed by the client
-    w.WriteHeader(cde)
-    
-    // Marshal the body into json and write to the response
-    b, berr := json.Marshal(val)
-    w.Write(b)
+	// Set a header indicating a json formatted response body
+	w.Header().Set("Content-Type", "application/json")
 
-    return berr
+	// Set the status code to be consumed by the client
+	w.WriteHeader(cde)
+
+	// Marshal the body into json and write to the response
+	b, berr := json.Marshal(val)
+	w.Write(b)
+
+	return berr
 }
 
 // FromJSON - Function converts JSON (a string) to a referenced (pointer to a) data structure
 func FromJSON(inVal string, outPtr interface{}) (retErr error) {
-  // Convert the string to a byte slice
-  tmpVal := []byte(inVal)
-  
-  // UnMarshall the byte array to a data structure pointed to by outPtr
-  retErr = json.Unmarshal(tmpVal, outPtr)
-  if retErr != nil {
-    log.Println("Error converting json string to a data structure:", retErr)
-  }
+	// Convert the string to a byte slice
+	tmpVal := []byte(inVal)
 
-  return
+	// UnMarshall the byte array to a data structure pointed to by outPtr
+	retErr = json.Unmarshal(tmpVal, outPtr)
+	if retErr != nil {
+		log.Println("Error converting json string to a data structure:", retErr)
+	}
+
+	return
 }
 
 // FromJSONBytes - Function converts JSON (a byte array) to a referenced (pointer to a) data structure
 func FromJSONBytes(inVal []byte, outPtr interface{}) (retErr error) {
-  // UnMarshall the byte array to a data structure pointed to by outPtr
-  retErr = json.Unmarshal(inVal, outPtr)
-  if retErr != nil {
-    log.Println("Error converting json string to a data structure:", retErr)
-  }
+	// UnMarshall the byte array to a data structure pointed to by outPtr
+	retErr = json.Unmarshal(inVal, outPtr)
+	if retErr != nil {
+		log.Println("Error converting json string to a data structure:", retErr)
+	}
 
-  return
+	return
 }
 
 // CheckErr - check for an error and print to the log if the passed error is not nil
@@ -150,3 +160,23 @@ func GetEnvVar(inVar string) string {
 	return os.Getenv(inVar)
 }
 
+// FormatPhoneUS accepts a string containing 10 numeric digits and returns a US formatted phone number
+func FormatPhoneUS(inVar string) (string, error) {
+	// Declare working variables
+	var tmpStr string
+	var tmpStrSlc []string
+	var retStr string
+	var retErr error
+
+	tmpStr = rgxNumDigit.ReplaceAllString(inVar, "")
+	if len(tmpStr) != 10 {
+		// The phone number to be formatted does not contain 10 digits (area code + number)
+		retErr = fmt.Errorf("inbound parameter [%v] does not contain 10 numeric digits", inVar)
+		return "", retErr
+	}
+
+	// Construct the return string
+	tmpStrSlc = strings.Split(tmpStr, "")
+	retStr = fmt.Sprintf("(%v) %v-%v", tmpStrSlc[0:3], tmpStrSlc[3:6], tmpStrSlc[6:10])
+	return retStr, retErr
+}
