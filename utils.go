@@ -177,6 +177,6 @@ func FormatPhoneUS(inVar string) (string, error) {
 
 	// Construct the return string
 	tmpStrSlc = strings.Split(tmpStr, "")
-	retStr = fmt.Sprintf("(%v) %v-%v", tmpStrSlc[0:3], tmpStrSlc[3:6], tmpStrSlc[6:10])
+	retStr = fmt.Sprintf("(%v) %v-%v", strings.Join(tmpStrSlc[0:3], ""), strings.Join(tmpStrSlc[3:6], ""), strings.Join(tmpStrSlc[6:10], ""))
 	return retStr, retErr
 }
