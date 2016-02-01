@@ -19,6 +19,21 @@ func init() {
 	rgxNumDigit = regexp.MustCompile("\\D")
 }
 
+// Contains determines if a string is an element within a slice of strings
+func Contains(s string, slc []string) bool {
+	retBool := false
+
+	for _, v := range slc {
+		if s == v {
+			// Passed string is present in the passed slice of strings; break out of loop and return
+			retBool = true
+			break
+		}
+	}
+
+	return retBool
+}
+
 // DumpRequest - Function that dumps a passed HTTP Request object
 // The function will return a byte slice and string
 func DumpRequest(inRequest *http.Request) (returnString string, returnBytes []byte, returnError error) {
