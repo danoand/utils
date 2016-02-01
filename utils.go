@@ -34,6 +34,20 @@ func Contains(s string, slc []string) bool {
 	return retBool
 }
 
+// GetFromParm fetches a string value from a map or an empty string if the key does not exist
+//   use for objects like parameter maps (i.e. map[string]string)
+func GetFromParm(k string, m map[string]string) string {
+	emptyVal := ""
+
+	if v, ok := m[k]; ok {
+		// Key exists, return the associated value
+		return v
+	}
+
+	// Key does not exist, return an empty string
+	return emptyVal
+}
+
 // DumpRequest - Function that dumps a passed HTTP Request object
 // The function will return a byte slice and string
 func DumpRequest(inRequest *http.Request) (returnString string, returnBytes []byte, returnError error) {
