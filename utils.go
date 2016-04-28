@@ -11,12 +11,16 @@ import (
 	"strings"
 )
 
-var rgxNumDigit *regexp.Regexp
+var rgxNonDigit *regexp.Regexp
+var rgxDigits *regexp.Regexp
 
 // init executes code at initialization time to ensure proper execution of the utils functions
 func init() {
-	// rgxNumDigit is a regular expression representing a numeric digit
-	rgxNumDigit = regexp.MustCompile("\\D")
+	// rgxNonDigit is a regular expression representing a non-digit
+	rgxNonDigit = regexp.MustCompile(`\D`)
+
+	// rgxDigits is a regular expression representing only digits
+	rgxDigits = regexp.MustCompile(`\d+`)
 }
 
 // Contains determines if a string is an element within a slice of strings
@@ -168,13 +172,26 @@ func CheckErrBool(inError error, inString string) (retBool bool) {
 
 // Getport fetches the port number from an environment variable so we can run on Heroku
 func Getport() string {
+	var retVal string
 	var port = os.Getenv("PORT")
-	// Set a default port if there is nothing in the environment
-	if port == "" {
-		port = "4567"
-		log.Printf("INFO: No PORT environment variable detected, defaulting to: %v\n", port)
+
+	switch {
+
+	// CASE: no port variable set; return a default value
+	case port == "":
+		retVal = ":4567"
+		log.Printf("INFO: No PORT environment variable detected, defaulting to: %v\n", retVal)
+
+	// CASE: port variable is a numeric only value (e.g. '8080'); return with prepended colon
+	case rgxDigits.MatchString(port):
+		retVal = fmt.Sprintf(":%v", port)
+
+	// CASE: port variable is NOT a numeric only value (e.g. 'localhost:7878'); return value
+	case !rgxDigits.MatchString(port):
+		retVal = port
 	}
-	return fmt.Sprint(":", port)
+
+	return retVal
 }
 
 // GetEnvVar fetches the value of a local environment variable or returns an empty string if it does not exist
@@ -197,7 +214,7 @@ func FormatPhoneUS(inVar string) (string, error) {
 	var retStr string
 	var retErr error
 
-	tmpStr = rgxNumDigit.ReplaceAllString(inVar, "")
+	tmpStr = rgxNonDigit.ReplaceAllString(inVar, "")
 	if len(tmpStr) != 10 {
 		// The phone number to be formatted does not contain 10 digits (area code + number)
 		retErr = fmt.Errorf("inbound parameter [%v] does not contain 10 numeric digits", inVar)
