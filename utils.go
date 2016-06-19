@@ -19,8 +19,8 @@ func init() {
 	// rgxNonDigit is a regular expression representing a non-digit
 	rgxNonDigit = regexp.MustCompile(`\D`)
 
-	// rgxDigits is a regular expression representing only digits
-	rgxDigits = regexp.MustCompile(`\d+`)
+	// rgxDigits is a regular expression representing a string that contains only digits
+	rgxDigits = regexp.MustCompile(`^\d+$`)
 }
 
 // Contains determines if a string is an element within a slice of strings
