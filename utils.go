@@ -228,7 +228,7 @@ func FormatPhoneUS(inVar string) (string, error) {
 	return retStr, retErr
 }
 
-// FileLine returns a string reflecting the filename and line number of the calling function
+// FileLine returns a string reflecting the filename and line number of the function call
 func FileLine() string {
 	var file = "unknown file"
 	var line = -1
