@@ -8,6 +8,7 @@ import (
 	"net/http/httputil"
 	"os"
 	"regexp"
+	"runtime"
 	"strings"
 )
 
@@ -225,4 +226,20 @@ func FormatPhoneUS(inVar string) (string, error) {
 	tmpStrSlc = strings.Split(tmpStr, "")
 	retStr = fmt.Sprintf("(%v) %v-%v", strings.Join(tmpStrSlc[0:3], ""), strings.Join(tmpStrSlc[3:6], ""), strings.Join(tmpStrSlc[6:10], ""))
 	return retStr, retErr
+}
+
+// FileLine returns a string reflecting the filename and line number of the calling function
+func FileLine() string {
+	var file = "unknown file"
+	var line = -1
+	var filepath []string
+
+	if _, f, l, ok := runtime.Caller(1); ok {
+		filepath = strings.Split(f, "/")
+		line = l
+
+		file = filepath[len(filepath)-1]
+	}
+
+	return fmt.Sprintf("%v: %v", file, line)
 }
