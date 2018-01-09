@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"log/syslog"
 	"net/http"
 	"net/http/httputil"
 	"os"
@@ -12,8 +13,21 @@ import (
 	"strings"
 )
 
-var rgxNonDigit *regexp.Regexp
-var rgxDigits *regexp.Regexp
+var (
+	lerr                               error
+	rgxNonDigit                        *regexp.Regexp
+	rgxDigits                          *regexp.Regexp
+	remoteLoggingSet                   bool
+	remoteLoggingAddr, remoteLogginTag string
+	remoteLogger                       *syslog.Writer
+)
+
+const (
+	LOG_INFO  = "INFO"
+	LOG_WARN  = "WARN"
+	LOG_ERROR = "ERROR"
+	LOG_DEBUG = "DEBUG"
+)
 
 // init executes code at initialization time to ensure proper execution of the utils functions
 func init() {
@@ -22,6 +36,73 @@ func init() {
 
 	// rgxDigits is a regular expression representing a string that contains only digits
 	rgxDigits = regexp.MustCompile(`^\d+$`)
+}
+
+// init function to set up remote logging
+func init() {
+	// Flag indicating
+	remoteLoggingSet = true
+
+	// Grab logging environment variable information
+	remoteLoggingAddr = os.Getenv("REMOTE_LOGGING_ADDR")
+	remoteLogginTag = os.Getenv("REMOTE_LOGGING_TAG")
+	if len(remoteLoggingAddr) == 0 || len(remoteLogginTag) == 0 {
+		// no remote logging address or tag information found
+		log.Printf("WARN: %v - no remote logging address (REMOTE_LOGGING_ADDR) or tag information (REMOTE_LOGGING_TAG) found\n", FileLine())
+		remoteLoggingSet = false
+	}
+
+	// Dial the remote logging system
+	if remoteLoggingSet && len(remoteLoggingAddr) != 0 && len(remoteLogginTag) != 0 {
+		remoteLogger, lerr = syslog.Dial("udp", remoteLoggingAddr, syslog.LOG_EMERG|syslog.LOG_KERN, remoteLogginTag)
+		if lerr != nil {
+			// error occurred dialing the remote logging system
+			log.Printf("ERROR: %v - error occurred dialing the remote logging system. See: %v\n", FileLine(), lerr)
+			remoteLoggingSet = false
+		}
+	}
+}
+
+// remLog logs a message to a remote logger
+func remLog(inLvl, inMsg string) {
+	var err error
+
+	if !remoteLoggingSet {
+		// attempting log to a remote server but remote logging is not configured
+		log.Printf("ERROR: %v - attempting log to a remote server but remote logging is not configured", FileLine())
+		return
+	}
+
+	// Log at the appropriate logging level
+	switch inLvl {
+
+	case LOG_DEBUG:
+		err = remoteLogger.Debug(inMsg)
+
+	case LOG_ERROR:
+		err = remoteLogger.Err(inMsg)
+
+	case LOG_INFO:
+		err = remoteLogger.Info(inMsg)
+
+	case LOG_WARN:
+		err = remoteLogger.Warning(inMsg)
+
+	default:
+		log.Printf("ERROR: %v - attempting to log to a remote server but log level: %v is not recognized\n",
+			FileLine(),
+			inLvl)
+		return
+	}
+
+	if err != nil {
+		// error occurred transmitting a remote log message
+		log.Printf("ERROR: %v - error occurred transmitting a remote log message. See: %v\n",
+			FileLine(),
+			inLvl)
+	}
+
+	return
 }
 
 // Contains determines if a string is an element within a slice of strings
