@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -201,6 +202,26 @@ func ToJSONnStatusResponse(w http.ResponseWriter, cde int, val interface{}) erro
 	w.Write(b)
 
 	return berr
+}
+
+// ToJSONReader - Function to write JSON to a reader that can be invoked downstream
+// ToJSONReader takes a string and byte slice and will process the string if non-empty or otherwise will process the byte slice
+func ToJSONReader(obj *interface{}) (*bytes.Reader, error) {
+	var (
+		err    error
+		tmpVal []byte
+		bufrdr *bytes.Reader
+	)
+
+	// Marshal the object into a json byte slice
+	tmpVal, err = json.Marshal(obj)
+	if err != nil {
+		// error marshaling a go object into a byte slice
+		return bufrdr, fmt.Errorf("error marshaling a go object into a byte slice; see: %v", err)
+	}
+
+	// Generate a reader to enable reading of the json byte slice downstream
+	return bytes.NewReader(tmpVal), nil
 }
 
 // FromJSON - Function converts JSON (a string) to a referenced (pointer to a) data structure
