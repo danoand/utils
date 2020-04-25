@@ -266,3 +266,17 @@ func FileLine() string {
 
 	return fmt.Sprintf("%v: %v", file, line)
 }
+
+// FileName returns a string reflecting the filename of the function call
+func FileName() string {
+	var file = "unknown file"
+	var filepath []string
+
+	if _, f, _, ok := runtime.Caller(1); ok {
+		filepath = strings.Split(f, "/")
+
+		file = filepath[len(filepath)-1]
+	}
+
+	return fmt.Sprintf("%v", file)
+}
