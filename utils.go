@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
+	"os/exec"
 	"regexp"
 	"runtime"
 	"strings"
@@ -43,7 +44,8 @@ func Contains(s string, slc []string) bool {
 }
 
 // GetFromParm fetches a string value from a map or an empty string if the key does not exist
-//   use for objects like parameter maps (i.e. map[string]string)
+//
+//	use for objects like parameter maps (i.e. map[string]string)
 func GetFromParm(k string, m map[string]string) string {
 	emptyVal := ""
 
@@ -279,4 +281,39 @@ func FileName() string {
 	}
 
 	return fmt.Sprintf("%v", file)
+}
+
+// GetCopyBuffer returns the data in the local copy buffer (at least for MacOS/Darwin)
+// It returns a string representation of the clipboard content and a byte slice of the same content.
+func GetCopyBuffer() (string, []byte, error) {
+	var retValStr string
+
+	// get the clipboard content
+	cmd1 := exec.Command("pbpaste")
+	out, err := cmd1.Output()
+	if err != nil {
+		return "", nil, fmt.Errorf("error getting clipboard content: %v", err)
+	}
+
+	// if there is no content, exit
+	if len(out) == 0 {
+		return "", nil, fmt.Errorf("no content in clipboard")
+	}
+
+	// convert the output to a string and byte slice
+	retValStr = string(out)
+	return retValStr, out, nil
+}
+
+// SetCopyBuffer sets the data in the local copy buffer (at least for MacOS/Darwin)
+func SetCopyBuffer(inStr string) error {
+	// set the clipboard content
+	cmd1 := exec.Command("pbcopy")
+	cmd1.Stdin = strings.NewReader(inStr)
+	err := cmd1.Run()
+	if err != nil {
+		return fmt.Errorf("error setting clipboard content: %v", err)
+	}
+
+	return nil
 }
